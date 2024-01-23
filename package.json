@@ -1,6 +1,6 @@
 {
-  "name": "iplayernownext",
-  "homepage": "https://jimoliver.github.io/iplayernownext",
+  "name": "radiovisualplay",
+  "homepage": "https://github.com/jimoliver/radiovisualplay",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
