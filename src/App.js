@@ -6,6 +6,7 @@ import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography';
 import { Temporal } from 'temporal-polyfill'
 import Image from './newsbackground.png';
+import sample from  './aarabicloop.mp4';
 const iplayerPink = '#f54996';
 
 const urls = {
@@ -240,6 +241,8 @@ export default function App(params) {
   return (
     <Paper sx={
       demo === true ?
+
+      
         { backgroundImage: `url(${Image})`, backgroundRepeat: 'round' }
         : { backgroundColor: 'transparent' }}>
       <Box sx={{
@@ -251,7 +254,12 @@ export default function App(params) {
           <Box></Box>
           <Box sx={{ display: 'block', marginLeft: 'auto' }}><TopRight show={params.tr} /></Box>
         </Box>
-        <Box></Box>
+        <Box>
+        <video className='videoTag' autoPlay loop muted>
+    <source src={sample} type='video/mp4' />
+</video>
+
+        </Box>
         <Bottom params={params} />
         <Box>
         </Box>
