@@ -255,8 +255,9 @@ export default function App(params) {
           <Box sx={{ display: 'block', marginLeft: 'auto' }}><TopRight show={params.tr} /></Box>
         </Box>
         <Box>
-        <video className='videoTag' autoPlay loop muted>
-    <source src={sample} type='video/mp4' />
+        <video className='videoTag' autoPlay loop width='1920'
+        height='1080'muted>
+    <source src={sample} type='video/mp4'        />
 </video>
 
         </Box>
