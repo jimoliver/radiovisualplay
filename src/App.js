@@ -61,7 +61,7 @@ function NowNext({ now, next, previewMinutes, styling }) {
   if (next) {
     const start = Date.parse(next.start);
     const minutesToNext = Math.round((start - (new Date())) / 1000 / 60);
-    console.log('minutes  to next start', minutesToNext, ' previewMinutes', previewMinutes);
+    console.log('minutes to next start', minutesToNext, ' previewMinutes', previewMinutes);
     if (minutesToNext <= 0) {
       r = '';
     }
