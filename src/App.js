@@ -241,12 +241,12 @@ function TopRight({ show }) {
 export default function App(params) {
   const demo = true;
   return (
-    <Paper sx={
+ //   <Paper sx={
       demo === true ?
 
       
-        { backgroundImage: `url(${Image})`, backgroundRepeat: 'round' }
-        : { backgroundColor: 'transparent' }}>
+ //       { backgroundImage: `url(${Image})`, backgroundRepeat: 'round' }
+ //       : { backgroundColor: 'transparent' }}>
       <Box sx={{
         width: 'auto', height: '100vh',
         display: 'grid', gridTemplateRows: '0px 543px 153px 24px'
