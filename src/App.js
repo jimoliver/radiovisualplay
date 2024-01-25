@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 // import Slide from '@mui/material/Slide';
-// import Fade from '@mui/material/Fade';
+import Fade from '@mui/material/Fade';
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography';
 import { Temporal } from 'temporal-polyfill'
@@ -51,12 +51,12 @@ function chooseNexts(next, minDuration) {
 
 
 
-function UpComing({ next, previewMinutes, styling }) {
+function UpComing({ next, previewMinutes, styling, show }) {
 
   // let r;
   let eventTitle = 'COMING UP';
   let upcomingitems = [];
-
+  const nowThenLater = ['Now', 'Then', 'Later'];
 
   // let eventTime;
   console.log(`Do we have a next? ${next ? JSON.stringify(next, null, 2) : 'undefined - no'}`);
@@ -66,9 +66,18 @@ function UpComing({ next, previewMinutes, styling }) {
     let canAdd = true;
     upcomingitems.length = 0;
     while (canAdd) {
-      upcomingitems.push(gettitles(next[addedCount]));
+      let item = gettitles(next[addedCount]);
+      if (nowThenLater[0]) {
+        item.starting = nowThenLater[0];
+        nowThenLater.shift();
+      }
+      upcomingitems.push(item);
       addedCount += 1;
       canAdd = upcomingitems.length < itemsToAdd && upcomingitems.length < next.length;
+
+    }
+    if (upcomingitems.length > 0) {
+      show();
     }
   } else {
     upcomingitems.push({
@@ -103,11 +112,18 @@ function UpComing({ next, previewMinutes, styling }) {
       <Box>
         {upcomingitems.map((item) => {
           return (<>
+            { item.starting ? <Box>
+            <Typography
+                fontFamily={'BBCReithSans_W_Md'}
+                fontSize={'1.7rem'} style={{color:"#a9a9a9"}} >&nbsp;&nbsp;{item.starting}
+                </Typography>
+            </Box> : '' }
+            { item.brandTitle ?
             <Box>
               <Typography
                 fontFamily={'BBCReithSans_W_Bd'}
-                fontSize={'2.6667rem'}>{item.brandTitle}</Typography>
-            </Box>
+                fontSize={'2.6667rem'}>&nbsp;&nbsp;&nbsp;&nbsp;{item.brandTitle}</Typography>
+            </Box>: '' }
             <Box
               sx={{
                 display: 'flex',
@@ -117,7 +133,7 @@ function UpComing({ next, previewMinutes, styling }) {
             >
               <Typography
                 fontFamily={'BBCReithSans_W_Md'}
-                fontSize={'2.2rem'}>{item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle}</Typography>
+                fontSize={'2.2rem'}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle}</Typography>
             </Box>
           </>
           )
@@ -144,6 +160,7 @@ function Middle({ params }) {
   const styling = params.styling || 'grownup';
 
   const [next, setNext] = useState([]);
+  const [on, setOn] = useState(false);
   const containerRef = React.useRef(null);
 
   // const FALSE = false;
@@ -152,7 +169,6 @@ function Middle({ params }) {
     if (next) {
       const nexts = JSON.stringify(next, 2000, null);
       console.log(`We have some nexts ${nexts}`);
-
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [next]);
@@ -171,27 +187,33 @@ function Middle({ params }) {
     return () => clearTimeout(tm);
   });
 
+  const fadeInUpcoming = () => {
+    setOn(true);
+  }
+
   console.log(`styling log ${styling}`);
   return (
-    <Box sx={{ overflow: 'hidden' }} ref={containerRef}>
-      <Box
-        sx={styling === 'grownup' ?
-          {
-            height: '720px', width: 'auto', color: 'white',
-             background: 'linear-gradient(to right, rgba(15, 15, 15, .8), rgba(245, 73, 151, .8))',
-            display: 'grid', gridTemplateColumns: '1fr', marginbottom: '100px'
-          }
-          : {
-            height: '720px', width: 'auto', color: 'black',
-             background: 'linear-gradient(to right, rgba(255, 255, 255, .9), rgba(255, 255, 255, .9))',
-            display: 'grid', gridTemplateColumns: '1fr', marginbottom: '100px'
-          }}
-      >
-        <Box display='flex' alignItems='center'>
-          <UpComing next={next} previewMinutes={previewMinutes} styling={styling} />
+    <Fade in={on} timeout={500}>
+      <Box sx={{ overflow: 'hidden' }} ref={containerRef}>
+        <Box
+          sx={styling === 'grownup' ?
+            {
+              height: '720px', width: 'auto', color: 'white',
+              background: 'linear-gradient(to right, rgba(15, 15, 15, .8), rgba(245, 73, 151, .8))',
+              display: 'grid', gridTemplateColumns: '1fr', marginbottom: '100px'
+            }
+            : {
+              height: '720px', width: 'auto', color: 'black',
+              background: 'linear-gradient(to right, rgba(255, 255, 255, .9), rgba(255, 255, 255, .9))',
+              display: 'grid', gridTemplateColumns: '1fr', marginbottom: '100px'
+            }}
+        >
+          <Box display='flex' alignItems='center'>
+            <UpComing next={next} previewMinutes={previewMinutes} styling={styling} show={fadeInUpcoming} />
+          </Box>
         </Box>
       </Box>
-    </Box>
+    </Fade>
   );
 }
 
@@ -223,7 +245,7 @@ export default function App(params) {
           <Box><TopLeft show={params.tl} /></Box>
           <Box></Box>
           <Box sx={{ display: 'block', marginLeft: 'auto' }}><TopRight show={params.tr} /></Box>
-          
+
         </Box>
         <Middle params={params} />
         <Box></Box>
