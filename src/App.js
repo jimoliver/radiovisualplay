@@ -147,7 +147,7 @@ function Middle({ params }) {
   const [next, setNext] = useState([]);
   const containerRef = React.useRef(null);
 
-  const FALSE = false;
+  // const FALSE = false;
 
   useEffect(() => {
     if (next) {
