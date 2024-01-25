@@ -6,7 +6,6 @@ import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography';
 import { Temporal } from 'temporal-polyfill'
 import Image from './livein19202.png';
-import sample from './backiplay.mp4';
 const iplayerPink = '#f54996';
 
 const urls = {
@@ -188,10 +187,6 @@ function Middle({ params }) {
             display: 'grid', gridTemplateColumns: '1fr', marginbottom: '100px'
           }}
       >
-        <video className='videoTag' autoPlay loop width='1280'
-          height='720' muted>
-          <source src={sample} type='video/mp4' />
-        </video>
         <Box display='flex' alignItems='center'>
           <UpComing next={next} previewMinutes={previewMinutes} styling={styling} />
         </Box>
