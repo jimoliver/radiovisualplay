@@ -6,7 +6,9 @@ import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography';
 import { Temporal } from 'temporal-polyfill'
 import Image from './newsbackground.png';
-import sample from  './aarabicloop.mp4';
+import sample from  './backiplay.mp4';
+
+
 const iplayerPink = '#f54996';
 
 const urls = {
@@ -205,14 +207,14 @@ function Bottom({ params }) {
         timeout={500}>
         <Box sx={styling === 'grownup' ?
           {
-            height: '153px', width: 'auto', color: 'black',
+            height: '153px', width: 'auto', color: 'white',
             background: 'linear-gradient(to right, rgba(15, 15, 15, .01), rgba(245, 73, 151, .01))',
-            display: 'grid', gridTemplateColumns: '1fr', marginbottom: '100px'
+            display: 'grid', gridTemplateColumns: '1fr', marginbottom: '600px'
           }
           : {
-            height: '153px', width: 'auto', color: 'black',
+            height: '153px', width: 'auto', color: 'white',
             background: 'linear-gradient(to right, rgba(255, 255, 255, .9), rgba(255, 255, 255, .9))',
-            display: 'grid', gridTemplateColumns: '1fr', marginbottom: '100px'
+            display: 'grid', gridTemplateColumns: '1fr', marginbottom: '600px'
           }}>
           <Box display='flex' alignItems='center'>
             <NowNext now={now} next={next} previewMinutes={previewMinutes} styling={styling} />
@@ -255,8 +257,8 @@ export default function App(params) {
           <Box sx={{ display: 'block', marginLeft: 'auto' }}><TopRight show={params.tr} /></Box>
         </Box>
         <Box>
-        <video className='videoTag' autoPlay loop width='1920'
-        height='1080'muted>
+        <video className='videoTag' autoPlay loop width='1280'
+        height='720'muted>
     <source src={sample} type='video/mp4'        />
 </video>
 
