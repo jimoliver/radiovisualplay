@@ -29,3 +29,8 @@ img {
   font-family: 'BBCReithSans_W_ExBd';
   src: local('BBCReithSans_W_ExBd'), url(./fonts/BBCReithSans_W_ExBd.woff2) format('woff2');
 }
+
+.videoTag {
+  position: fixed;
+  z-index: -1;
+}
