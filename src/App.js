@@ -188,7 +188,7 @@ function Middle({ params }) {
             display: 'grid', gridTemplateColumns: '1fr', marginbottom: '100px'
           }}
       >
-        <video className='videoTag' autoPlay loop width='1280'
+        <video  autoPlay loop width='1280'
           height='720' muted>
           <source src={sample} type='video/mp4' />
         </video>
