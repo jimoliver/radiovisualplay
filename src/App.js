@@ -188,7 +188,7 @@ function Middle({ params }) {
             display: 'grid', gridTemplateColumns: '1fr', marginbottom: '100px'
           }}
       >
-        <video  autoPlay loop width='1280'
+        <video className='videoTag' autoPlay loop width='1280'
           height='720' muted>
           <source src={sample} type='video/mp4' />
         </video>
@@ -228,13 +228,7 @@ export default function App(params) {
           <Box><TopLeft show={params.tl} /></Box>
           <Box></Box>
           <Box sx={{ display: 'block', marginLeft: 'auto' }}><TopRight show={params.tr} /></Box>
-          <Box>
-        <video className='videoTag' autoPlay loop width='1280'
-        height='720'muted>
-    <source src={sample} type='video/mp4'        />
-</video>
-
-        </Box>
+          
         </Box>
         <Middle params={params} />
         <Box></Box>
