@@ -179,12 +179,12 @@ function Middle({ params }) {
         sx={styling === 'grownup' ?
           {
             height: '720px', width: 'auto', color: 'white',
-            // background: 'linear-gradient(to right, rgba(15, 15, 15, .8), rgba(245, 73, 151, .8))',
+             background: 'linear-gradient(to right, rgba(15, 15, 15, .8), rgba(245, 73, 151, .8))',
             display: 'grid', gridTemplateColumns: '1fr', marginbottom: '100px'
           }
           : {
             height: '720px', width: 'auto', color: 'black',
-            // background: 'linear-gradient(to right, rgba(255, 255, 255, .9), rgba(255, 255, 255, .9))',
+             background: 'linear-gradient(to right, rgba(255, 255, 255, .9), rgba(255, 255, 255, .9))',
             display: 'grid', gridTemplateColumns: '1fr', marginbottom: '100px'
           }}
       >
