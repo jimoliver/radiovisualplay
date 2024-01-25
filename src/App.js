@@ -74,7 +74,7 @@ function UpComing({ next, previewMinutes, styling }) {
   } else {
     upcomingitems.push({
       episodeTitle: '',
-      brandTitle: `Nothing for the forseeable...`,
+      brandTitle: `Coming up on the History Stream...`,
       seriesTitle: '',
     });
   }
