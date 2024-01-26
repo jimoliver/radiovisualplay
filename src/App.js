@@ -13,6 +13,8 @@ const urls = {
   live: 'https://ypdjc6zbc5cnvth24lk3mm45sm0qtgps.lambda-url.eu-west-1.on.aws'
 };
 
+const oneHour = 60 * 60;
+
 function titlefor(o, rel) {
   return o.title_hierarchy?.titles?.find((t) => t.inherited_from?.link?.rel === `pips-meta:${rel}`)?.title?.$;
 }
@@ -49,14 +51,12 @@ function chooseNexts(next, minDuration) {
   return { title: '' };
 }
 
-
-
 function UpComing({ next, previewMinutes, styling, show }) {
 
   // let r;
   let eventTitle = 'COMING UP';
   let upcomingitems = [];
-  const nowThenLater = ['Now', 'Then', 'Later'];
+  const nowThenLater = ['Next', 'Then', 'Later'];
 
   // let eventTime;
   console.log(`Do we have a next? ${next ? JSON.stringify(next, null, 2) : 'undefined - no'}`);
@@ -71,6 +71,22 @@ function UpComing({ next, previewMinutes, styling, show }) {
         item.starting = nowThenLater[0];
         nowThenLater.shift();
       }
+      const start = Date.parse(next[addedCount].start);
+      const startTime = new Date(next[addedCount].start).toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit', hour12: true});
+      const secondsToNext = Math.round((start - (new Date())) / 1000);
+      if (secondsToNext < 60) {    
+        if ((secondsToNext >= 1) && (secondsToNext < 2)) {
+          item.starting = `${item.starting} in 1 second`;
+        } else if (secondsToNext >= 2) {
+          item.starting = `${item.starting} in ${Math.round(secondsToNext / 60)} seconds`;
+        }
+      } else if (secondsToNext < oneHour) {
+        const minutesToNext = Math.round(secondsToNext  / 60);
+        item.starting = `${item.starting} in ${minutesToNext} ${minutesToNext === 1 ? 'minute' : 'minutes'}`; 
+      } else {
+        item.starting = `${item.starting} at ${startTime}`;
+      }
+
       upcomingitems.push(item);
       addedCount += 1;
       canAdd = upcomingitems.length < itemsToAdd && upcomingitems.length < next.length;
