@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Box from '@mui/material/Box';
 // import Slide from '@mui/material/Slide';
 import Fade from '@mui/material/Fade';
@@ -69,9 +69,6 @@ const introImages = [
 
 const iplayerPink = '#f54996';
 
-
-
-
 const urls = {
   test: 'https://jfayiszondlcqngo5vavioz6bq0ibxen.lambda-url.eu-west-1.on.aws/',
   live: 'https://ypdjc6zbc5cnvth24lk3mm45sm0qtgps.lambda-url.eu-west-1.on.aws'
@@ -115,57 +112,14 @@ function chooseNexts(next, minDuration) {
   return { title: '' };
 }
 
-function UpComing({ next, previewMinutes, styling, show }) {
+function UpComing({ upcomingitems, previewMinutes, styling, show }) {
 
   // let r;
   let eventTitle = 'COMING UP';
-  let upcomingitems = [];
-  const nowThenLater = ['Next', 'Then', 'Later'];
 
   // let eventTime;
-  console.log(`Do we have a next? ${next ? JSON.stringify(next, null, 2) : 'undefined - no'}`);
-  if (next.length > 0) {
-    let itemsToAdd = 3;
-    let addedCount = 0;
-    let canAdd = true;
-    upcomingitems.length = 0;
-    while (canAdd) {
-      let item = gettitles(next[addedCount]);
-      if (nowThenLater[0]) {
-        item.starting = nowThenLater[0];
-        nowThenLater.shift();
-      }
-      const start = Date.parse(next[addedCount].start);
-      const startTime = new Date(next[addedCount].start).toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit', hour12: true });
-      const secondsToNext = Math.round((start - (new Date())) / 1000);
-      if (secondsToNext < 60) {
-        if ((secondsToNext >= 1) && (secondsToNext < 2)) {
-          item.starting = `${item.starting} in 1 second`;
-        } else if (secondsToNext >= 2) {
-          item.starting = `${item.starting} in ${Math.round(secondsToNext / 60)} seconds`;
-        }
-      } else if (secondsToNext < oneHour) {
-        const minutesToNext = Math.round(secondsToNext / 60);
-        item.starting = `${item.starting} in ${minutesToNext} ${minutesToNext === 1 ? 'minute' : 'minutes'}`;
-      } else {
-        item.starting = `${item.starting} at ${startTime}`;
-      }
-
-      upcomingitems.push(item);
-      addedCount += 1;
-      canAdd = upcomingitems.length < itemsToAdd && upcomingitems.length < next.length;
-
-    }
-    if (upcomingitems.length > 0) {
-      show();
-    }
-  } else {
-    upcomingitems.push({
-      episodeTitle: '',
-      brandTitle: `Coming up on the History Stream...`,
-      seriesTitle: '',
-    });
-  }
+  // console.log(`Do we have a next? ${next ? JSON.stringify(next, null, 2) : 'undefined - no'}`);
+ 
   return (
     <Box sx={{
       width: 'auto', height: '720px',
@@ -192,14 +146,14 @@ function UpComing({ next, previewMinutes, styling, show }) {
       <Box>
         {upcomingitems.map((item) => {
           return (<>
-            {item.starting ? <Box>
+            {item.starting ? <Box key={item.starting}>
               <Typography
                 fontFamily={'BBCReithSans_W_Md'}
                 fontSize={'1.7rem'} style={{ color: "#a9a9a9" }} >&nbsp;&nbsp;{item.starting}
               </Typography>
             </Box> : ''}
             {item.brandTitle ?
-              <Box>
+              <Box key={item.brandTitle}>
                 <Typography
                   fontFamily={'BBCReithSans_W_Bd'}
                   fontSize={'2.6667rem'}>&nbsp;&nbsp;&nbsp;&nbsp;{item.brandTitle}</Typography>
@@ -210,6 +164,7 @@ function UpComing({ next, previewMinutes, styling, show }) {
                 flexWrap: 'wrap',
                 alignContent: 'flex-start',
               }}
+              key={item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle}
             >
               <Typography
                 fontFamily={'BBCReithSans_W_Md'}
@@ -229,48 +184,17 @@ function UpComing({ next, previewMinutes, styling, show }) {
 //   return (duration.hours * 60 * 60 * 1000) + (duration.minutes * 60 * 1000) + (duration.seconds * 1000) + duration.milliseconds;
 // }
 
-function Middle({ params, fadeInUpcoming, styling }) {
-
-  const minDuration = Temporal.Duration.from(params.minDuration || 'PT2M');
+function Middle({ params, styling, upcomingitems }) {
   const previewMinutes = params.next ? parseInt(params.next) : 2;
-
-  const env = params.env || 'live';
-  const sid = params.sid || 'History_Channel';
-  const region = params.region || 'eu-west-2';
-
-  const [next, setNext] = useState([]);
   const containerRef = React.useRef(null);
 
   // const FALSE = false;
-
-  useEffect(() => {
-    if (next) {
-      const nexts = JSON.stringify(next, 2000, null);
-      console.log(`We have some nexts ${nexts}`);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [next]);
-
-  // On page load useEffect
-  useEffect(() => {
-    const tm = setTimeout(() => {
-      (async () => {
-        const r = await fetch(`${urls[env]}/${sid}/${region}`);
-        if (r.ok) {
-          const data = await r.json()
-          setNext(chooseNexts(data.next, minDuration));
-        }
-      })();
-    }, 1);
-    return () => clearTimeout(tm);
-  });
-
   console.log(`styling log ${styling}`);
   return (
     <Box sx={{ overflow: 'hidden' }} ref={containerRef}>
       <Box>
         <Box display='flex' alignItems='center'>
-          <UpComing next={next} previewMinutes={previewMinutes} styling={styling} show={fadeInUpcoming} />
+          <UpComing upcomingitems={upcomingitems} previewMinutes={previewMinutes} styling={styling} />
         </Box>
       </Box>
     </Box>
@@ -294,41 +218,99 @@ export default function App(params) {
   const styling = params.styling || 'grownup';
   const [on, setOn] = useState(false);
   const [steady, setSteady] = useState(false);
-  const [runAlready, setRunAlready] = useState(false);
+  const [next, setNext] = useState([]);
+  const [upcomingitems, setUpcomingItems] = useState([]);
+
+  const timerRef = useRef(null);
+
+  const env = params.env || 'live';
+  const sid = params.sid || 'History_Channel';
+  const region = params.region || 'eu-west-2';
+  const nowThenLater = ['Next', 'Then', 'Later'];
+  const minDuration = Temporal.Duration.from(params.minDuration || 'PT2M');
+
   const demo = false;
   console.log(`params.styling ${params.styling} styling ${styling}`)
+  
+  useEffect(() => {
+    if (upcomingitems.length > 0) {
+      setOn(true);
+    }
+  }, [upcomingitems])
+
+  useEffect(() => {
+    if (next) {
+      const nexts = JSON.stringify(next, 2000, null);
+      console.log(`We have some nexts ${nexts}`);
+      const items = [];
+      if (next.length > 0) {
+        let itemsToAdd = 3;
+        let addedCount = 0;
+        let canAdd = true;
+        while (canAdd) {
+          console.log('next[addedCount]', next[addedCount])
+          let item = gettitles(next[addedCount]);
+          if (nowThenLater[0]) {
+            item.starting = nowThenLater[0];
+            nowThenLater.shift();
+          }
+          const start = Date.parse(next[addedCount].start);
+          const startTime = new Date(next[addedCount].start).toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit', hour12: true });
+          const secondsToNext = Math.round((start - (new Date())) / 1000);
+          if (secondsToNext < 60) {
+            if ((secondsToNext >= 1) && (secondsToNext < 2)) {
+              item.starting = `${item.starting} in 1 second`;
+            } else if (secondsToNext >= 2) {
+              item.starting = `${item.starting} in ${Math.round(secondsToNext / 60)} seconds`;
+            }
+          } else if (secondsToNext < oneHour) {
+            const minutesToNext = Math.round(secondsToNext / 60);
+            item.starting = `${item.starting} in ${minutesToNext} ${minutesToNext === 1 ? 'minute' : 'minutes'}`;
+          } else {
+            item.starting = `${item.starting} at ${startTime}`;
+          }
+    
+          items.push(item);
+          addedCount += 1;
+          canAdd = items.length < itemsToAdd && items.length < next.length;
+    
+        }
+      } 
+      setUpcomingItems(items);
+
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [next]);
 
   // On page load useEffect
   useEffect(() => {
-    if (runAlready === false) {
-      console.log('initial set steady', steady);
-      setRunAlready(true);
-      setTimeout(nowAnimate(), 25000);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [runAlready])
+    const tm = setTimeout(() => {
+      (async () => {
+        const r = await fetch(`${urls[env]}/${sid}/${region}`);
+        if (r.ok) {
+          const data = await r.json()
+          setNext(chooseNexts(data.next, minDuration));
+        }
+      })();
+    }, 1);
+    return () => clearTimeout(tm);
+  });
+
+
 
   useEffect(() => {
     console.log(`steady is ${steady}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [steady])
 
-  const nowAnimate = () => {
-    console.log('nowAnimate');
-    setSteady(true);
-  }
-
-  const fadeInUpcoming = () => {
-    setOn(true);
-  }
+  useEffect(() => {
+    // Clear the timeOut when the component unmounts
+    return () => clearTimeout(timerRef.current);
+  }, []);
 
   const pauseSequence = () => {
     setSteady(false);
-    // const tm = setTimeout(startSequnce() , 10000);
-  }
-
-  const startSequnce = () => {
-    setSteady(true);
+    timerRef.current = setTimeout(() => setSteady(true), 5000);
   }
 
   return (
@@ -361,7 +343,7 @@ export default function App(params) {
             </Box>
             <Box sx={{ display: 'block', marginLeft: 'auto' }}><TopRight show={params.tr} /></Box>
           </Box>
-          <Middle params={params} fadeInUpcoming={fadeInUpcoming} styling={styling} />
+          <Middle params={params} upcomingitems={upcomingitems} styling={styling} />
           <Box></Box>
         </Box>
       </Fade>
