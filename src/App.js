@@ -136,17 +136,17 @@ function UpComing({ next, previewMinutes, styling, show }) {
         nowThenLater.shift();
       }
       const start = Date.parse(next[addedCount].start);
-      const startTime = new Date(next[addedCount].start).toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit', hour12: true});
+      const startTime = new Date(next[addedCount].start).toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit', hour12: true });
       const secondsToNext = Math.round((start - (new Date())) / 1000);
-      if (secondsToNext < 60) {    
+      if (secondsToNext < 60) {
         if ((secondsToNext >= 1) && (secondsToNext < 2)) {
           item.starting = `${item.starting} in 1 second`;
         } else if (secondsToNext >= 2) {
           item.starting = `${item.starting} in ${Math.round(secondsToNext / 60)} seconds`;
         }
       } else if (secondsToNext < oneHour) {
-        const minutesToNext = Math.round(secondsToNext  / 60);
-        item.starting = `${item.starting} in ${minutesToNext} ${minutesToNext === 1 ? 'minute' : 'minutes'}`; 
+        const minutesToNext = Math.round(secondsToNext / 60);
+        item.starting = `${item.starting} in ${minutesToNext} ${minutesToNext === 1 ? 'minute' : 'minutes'}`;
       } else {
         item.starting = `${item.starting} at ${startTime}`;
       }
@@ -192,18 +192,18 @@ function UpComing({ next, previewMinutes, styling, show }) {
       <Box>
         {upcomingitems.map((item) => {
           return (<>
-            { item.starting ? <Box>
-            <Typography
-                fontFamily={'BBCReithSans_W_Md'}
-                fontSize={'1.7rem'} style={{color:"#a9a9a9"}} >&nbsp;&nbsp;{item.starting}
-                </Typography>
-            </Box> : '' }
-            { item.brandTitle ?
-            <Box>
+            {item.starting ? <Box>
               <Typography
-                fontFamily={'BBCReithSans_W_Bd'}
-                fontSize={'2.6667rem'}>&nbsp;&nbsp;&nbsp;&nbsp;{item.brandTitle}</Typography>
-            </Box>: '' }
+                fontFamily={'BBCReithSans_W_Md'}
+                fontSize={'1.7rem'} style={{ color: "#a9a9a9" }} >&nbsp;&nbsp;{item.starting}
+              </Typography>
+            </Box> : ''}
+            {item.brandTitle ?
+              <Box>
+                <Typography
+                  fontFamily={'BBCReithSans_W_Bd'}
+                  fontSize={'2.6667rem'}>&nbsp;&nbsp;&nbsp;&nbsp;{item.brandTitle}</Typography>
+              </Box> : ''}
             <Box
               sx={{
                 display: 'flex',
@@ -229,7 +229,7 @@ function UpComing({ next, previewMinutes, styling, show }) {
 //   return (duration.hours * 60 * 60 * 1000) + (duration.minutes * 60 * 1000) + (duration.seconds * 1000) + duration.milliseconds;
 // }
 
-function Middle({ params }) {
+function Middle({ params, fadeInUpcoming, styling }) {
 
   const minDuration = Temporal.Duration.from(params.minDuration || 'PT2M');
   const previewMinutes = params.next ? parseInt(params.next) : 2;
@@ -237,10 +237,8 @@ function Middle({ params }) {
   const env = params.env || 'live';
   const sid = params.sid || 'History_Channel';
   const region = params.region || 'eu-west-2';
-  const styling = params.styling || 'grownup';
 
   const [next, setNext] = useState([]);
-  const [on, setOn] = useState(false);
   const containerRef = React.useRef(null);
 
   // const FALSE = false;
@@ -267,33 +265,17 @@ function Middle({ params }) {
     return () => clearTimeout(tm);
   });
 
-  const fadeInUpcoming = () => {
-    setOn(true);
-  }
-
   console.log(`styling log ${styling}`);
   return (
-    <Fade in={on} timeout={500}>
-      <Box sx={{ overflow: 'hidden' }} ref={containerRef}>
-        <Box
-          sx={styling === 'grownup' ?
-            {
-              height: '720px', width: 'auto', color: 'white',
-              background: 'linear-gradient(to right, rgba(15, 15, 15, .8), rgba(245, 73, 151, .8))',
-              display: 'grid', gridTemplateColumns: '1fr', marginbottom: '100px'
-            }
-            : {
-              height: '720px', width: 'auto', color: 'black',
-              background: 'linear-gradient(to right, rgba(255, 255, 255, .9), rgba(255, 255, 255, .9))',
-              display: 'grid', gridTemplateColumns: '1fr', marginbottom: '100px'
-            }}
-        >
-          <Box display='flex' alignItems='center'>
-            <UpComing next={next} previewMinutes={previewMinutes} styling={styling} show={fadeInUpcoming} />
-          </Box>
+    <Box sx={{ overflow: 'hidden' }} ref={containerRef}>
+      <Box
+
+      >
+        <Box display='flex' alignItems='center'>
+          <UpComing next={next} previewMinutes={previewMinutes} styling={styling} show={fadeInUpcoming} />
         </Box>
       </Box>
-    </Fade>
+    </Box>
   );
 }
 
@@ -311,30 +293,55 @@ function TopRight({ show }) {
   return '';
 }
 export default function App(params) {
+  const styling = params.styling || 'grownup';
+  const [on, setOn] = useState(false);
+  const [steady, setSteady] = useState(true);
   const demo = false;
+  console.log(`params.styling ${params.styling} styling ${styling}`)
+  const fadeInUpcoming = () => {
+    setOn(true);
+  }
+
+  const pauseSequence = () => {
+    const tm = setTimeout(setSteady(true), 1000);
+    console.log('pauseSequence', tm);
+  }
+
   return (
     <Paper sx={
       demo === true ?
         { backgroundImage: `url(${Image})`, backgroundRepeat: 'round' }
         : { backgroundColor: 'transparent' }}>
-      <Box sx={{
-        width: 'auto', height: '100vh',
-        display: 'grid', gridTemplateRows: '50px 620px 50px'
-      }}>
-        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>
-          <Box><TopLeft show={params.tl} /></Box>
-          <Box>
-        <SequenceAnimator duration={3000} onSequenceEnd={() => console.log("animation finished")}>
-            {introImages.map((im, index) => (<img key={index} src={im} alt='BBC' />))}
-          </SequenceAnimator>
+      <Fade in={on} timeout={500}>
+        <Box
+          sx={
+            styling === 'grownup' ?
+              {
+                height: '720px', width: 'auto', color: 'white',
+                background: 'linear-gradient(to right, rgba(15, 15, 15, .8), rgba(245, 73, 151, .8))',
+                display: 'grid', gridTemplateRows: '50px 620px 50px', gridTemplateColumns: '1fr', marginbottom: '100px'
+              }
+              : {
+                height: '720px', width: 'auto', color: 'black',
+                background: 'linear-gradient(to right, rgba(255, 255, 255, .9), rgba(255, 255, 255, .9))',
+                display: 'grid', gridTemplateRows: '50px 620px 50px', gridTemplateColumns: '1fr', marginbottom: '100px'
+              }}
+
+        >
+          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>
+            <Box><TopLeft show={params.tl} /></Box>
+            <Box>
+              <SequenceAnimator duration={3000}>
+                {introImages.map((im, index) => (<img key={index} src={im} alt='BBC' />))}
+              </SequenceAnimator>
+            </Box>
+            <Box sx={{ display: 'block', marginLeft: 'auto' }}><TopRight show={params.tr} /></Box>
 
           </Box>
-          <Box sx={{ display: 'block', marginLeft: 'auto' }}><TopRight show={params.tr} /></Box>
-
+          <Middle params={params} fadeInUpcoming={fadeInUpcoming} styling={styling} />
+          <Box></Box>
         </Box>
-        <Middle params={params} />
-        <Box></Box>
-      </Box>
+      </Fade>
     </Paper>
   );
 }
