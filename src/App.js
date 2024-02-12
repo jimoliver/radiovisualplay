@@ -268,9 +268,7 @@ function Middle({ params, fadeInUpcoming, styling }) {
   console.log(`styling log ${styling}`);
   return (
     <Box sx={{ overflow: 'hidden' }} ref={containerRef}>
-      <Box
-
-      >
+      <Box>
         <Box display='flex' alignItems='center'>
           <UpComing next={next} previewMinutes={previewMinutes} styling={styling} show={fadeInUpcoming} />
         </Box>
@@ -295,16 +293,42 @@ function TopRight({ show }) {
 export default function App(params) {
   const styling = params.styling || 'grownup';
   const [on, setOn] = useState(false);
-  const [steady, setSteady] = useState(true);
+  const [steady, setSteady] = useState(false);
+  const [runAlready, setRunAlready] = useState(false);
   const demo = false;
   console.log(`params.styling ${params.styling} styling ${styling}`)
+
+  // On page load useEffect
+  useEffect(() => {
+    if (runAlready === false) {
+      console.log('initial set steady', steady);
+      setRunAlready(true);
+      setTimeout(nowAnimate(), 25000);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runAlready])
+
+  useEffect(() => {
+    console.log(`steady is ${steady}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [steady])
+
+  const nowAnimate = () => {
+    console.log('nowAnimate');
+    setSteady(true);
+  }
+
   const fadeInUpcoming = () => {
     setOn(true);
   }
 
   const pauseSequence = () => {
-    const tm = setTimeout(setSteady(true), 1000);
-    console.log('pauseSequence', tm);
+    setSteady(false);
+    // const tm = setTimeout(startSequnce() , 10000);
+  }
+
+  const startSequnce = () => {
+    setSteady(true);
   }
 
   return (
@@ -312,7 +336,7 @@ export default function App(params) {
       demo === true ?
         { backgroundImage: `url(${Image})`, backgroundRepeat: 'round' }
         : { backgroundColor: 'transparent' }}>
-      <Fade in={on} timeout={500}>
+      <Fade in={on} timeout={500} addEndListener={() => setSteady(true)}>
         <Box
           sx={
             styling === 'grownup' ?
@@ -331,12 +355,11 @@ export default function App(params) {
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>
             <Box><TopLeft show={params.tl} /></Box>
             <Box>
-              <SequenceAnimator duration={3000}>
+              {steady ? <SequenceAnimator duration={3000} loop={steady} onSequenceEnd={() => pauseSequence()}>
                 {introImages.map((im, index) => (<img key={index} src={im} alt='BBC' />))}
-              </SequenceAnimator>
+              </SequenceAnimator> : <></>}
             </Box>
             <Box sx={{ display: 'block', marginLeft: 'auto' }}><TopRight show={params.tr} /></Box>
-
           </Box>
           <Middle params={params} fadeInUpcoming={fadeInUpcoming} styling={styling} />
           <Box></Box>
