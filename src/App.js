@@ -119,10 +119,10 @@ function UpComing({ upcomingitems, previewMinutes, styling, show }) {
 
   // let eventTime;
   // console.log(`Do we have a next? ${next ? JSON.stringify(next, null, 2) : 'undefined - no'}`);
- 
+
   return (
     <Box sx={{
-      width: 'auto', height: '720px',
+      width: 'auto', height: '620px',
       display: 'grid', gridTemplateRows: '1fr 1fr 1fr', paddingLeft: '5%', paddingbottom: '5%'
     }}>
       <Box
@@ -192,10 +192,8 @@ function Middle({ params, styling, upcomingitems }) {
   console.log(`styling log ${styling}`);
   return (
     <Box sx={{ overflow: 'hidden' }} ref={containerRef}>
-      <Box>
-        <Box display='flex' alignItems='center'>
-          <UpComing upcomingitems={upcomingitems} previewMinutes={previewMinutes} styling={styling} />
-        </Box>
+      <Box display='flex' alignItems='center'>
+        <UpComing upcomingitems={upcomingitems} previewMinutes={previewMinutes} styling={styling} />
       </Box>
     </Box>
   );
@@ -231,7 +229,7 @@ export default function App(params) {
 
   const demo = false;
   console.log(`params.styling ${params.styling} styling ${styling}`)
-  
+
   useEffect(() => {
     if (upcomingitems.length > 0) {
       setOn(true);
@@ -269,13 +267,13 @@ export default function App(params) {
           } else {
             item.starting = `${item.starting} at ${startTime}`;
           }
-    
+
           items.push(item);
           addedCount += 1;
           canAdd = items.length < itemsToAdd && items.length < next.length;
-    
+
         }
-      } 
+      }
       setUpcomingItems(items);
 
     }
@@ -314,7 +312,7 @@ export default function App(params) {
   }
 
   return (
-    <Paper sx={
+    <Paper m={0} sx={
       demo === true ?
         { backgroundImage: `url(${Image})`, backgroundRepeat: 'round' }
         : { backgroundColor: 'transparent' }}>
