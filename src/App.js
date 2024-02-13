@@ -132,7 +132,7 @@ function UpComing({ upcomingitems, previewMinutes, styling, show }) {
         }}
       >
         <Typography
-          fontSize={'1.7rem'}>
+          fontSize={'1.7rem'} key={eventTitle}>
           <span
             style={{
               fontFamily: 'BBCReithSans_W_ExBd',
@@ -144,32 +144,32 @@ function UpComing({ upcomingitems, previewMinutes, styling, show }) {
       </Box>
       <Box>
         {upcomingitems.map((item) => {
-          return (<>
-            {item.starting ? <Box key={item.starting}>
-              <Typography
-                fontFamily={'BBCReithSans_W_Md'}
-                fontSize={'1.7rem'} style={{ color: "#a9a9a9" }} >&nbsp;&nbsp;{item.starting}
-              </Typography>
-            </Box> : ''}
-            {item.brandTitle ?
-              <Box key={item.brandTitle}>
+          return (
+            <div key={item.starting + item.brandTitle + (item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle)}>
+              {item.starting ? <Box>
                 <Typography
-                  fontFamily={'BBCReithSans_W_Bd'}
-                  fontSize={'2.6667rem'}>&nbsp;&nbsp;&nbsp;&nbsp;{item.brandTitle}</Typography>
+                  fontFamily={'BBCReithSans_W_Md'}
+                  fontSize={'1.7rem'} style={{ color: "#a9a9a9" }} >&nbsp;&nbsp;{item.starting}
+                </Typography>
               </Box> : ''}
-            <Box
-              sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                alignContent: 'flex-start',
-              }}
-              key={item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle}
-            >
-              <Typography
-                fontFamily={'BBCReithSans_W_Md'}
-                fontSize={'2.2rem'}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle}</Typography>
-            </Box>
-          </>
+              {item.brandTitle ?
+                <Box>
+                  <Typography
+                    fontFamily={'BBCReithSans_W_Bd'}
+                    fontSize={'2.6667rem'}>&nbsp;&nbsp;&nbsp;&nbsp;{item.brandTitle}</Typography>
+                </Box> : ''}
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  alignContent: 'flex-start',
+                }}
+              >
+                <Typography
+                  fontFamily={'BBCReithSans_W_Md'}
+                  fontSize={'2.2rem'}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle}</Typography>
+              </Box>
+            </div>
           )
         })}
       </Box>
@@ -234,7 +234,7 @@ export default function App(params) {
   }, [upcomingitems])
 
   useEffect(() => {
-    if (next) {
+    if ((next) && (next.length > 0)) {
       const nexts = JSON.stringify(next, 2000, null);
       console.log(`We have some nexts ${nexts}`);
       const items = [];
@@ -279,16 +279,19 @@ export default function App(params) {
 
   // On page load useEffect
   useEffect(() => {
-    const tm = setTimeout(() => {
-      (async () => {
-        const r = await fetch(`${urls[env]}/${sid}/${region}`);
-        if (r.ok) {
-          const data = await r.json()
-          setNext(chooseNexts(data.next, minDuration));
-        }
-      })();
-    }, 1);
-    return () => clearTimeout(tm);
+    if (next.length === 0) {
+      const tm = setTimeout(() => {
+        (async () => {
+          const r = await fetch(`${urls[env]}/${sid}/${region}`);
+          if (r.ok) {
+            const data = await r.json()
+            console.log(`data ${data}`);
+            setNext(chooseNexts(data.next, minDuration));
+          }
+        })();
+      }, 1);
+      return () => clearTimeout(tm);
+    }
   });
 
 
