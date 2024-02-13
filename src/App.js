@@ -307,7 +307,7 @@ export default function App(params) {
   }
 
   return (
-    <Paper m={0} sx={
+    <Paper elevation={0} sx={
       demo === true ?
         { backgroundImage: `url(${Image})`, backgroundRepeat: 'round' }
         : { backgroundColor: 'transparent' }}>
