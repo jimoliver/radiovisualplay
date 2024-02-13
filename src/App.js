@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Box from '@mui/material/Box';
-// import Slide from '@mui/material/Slide';
 import Fade from '@mui/material/Fade';
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography';
@@ -188,8 +187,6 @@ function Middle({ params, styling, upcomingitems }) {
   const previewMinutes = params.next ? parseInt(params.next) : 2;
   const containerRef = React.useRef(null);
 
-  // const FALSE = false;
-  console.log(`styling log ${styling}`);
   return (
     <Box sx={{ overflow: 'hidden' }} ref={containerRef}>
       <Box display='flex' alignItems='center'>
