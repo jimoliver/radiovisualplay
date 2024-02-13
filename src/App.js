@@ -112,12 +112,7 @@ function chooseNexts(next, minDuration) {
 }
 
 function UpComing({ upcomingitems, previewMinutes, styling, show }) {
-
-  // let r;
   let eventTitle = 'COMING UP';
-
-  // let eventTime;
-  // console.log(`Do we have a next? ${next ? JSON.stringify(next, null, 2) : 'undefined - no'}`);
 
   return (
     <Box sx={{
