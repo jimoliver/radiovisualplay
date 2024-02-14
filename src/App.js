@@ -111,7 +111,7 @@ function chooseNexts(next, minDuration) {
   return { title: '' };
 }
 
-function UpComing({ upcomingitems, previewMinutes, styling, show }) {
+function UpComing({ upcomingitems }) {
   let eventTitle = 'COMING UP';
 
   return (
@@ -178,14 +178,13 @@ function UpComing({ upcomingitems, previewMinutes, styling, show }) {
 //   return (duration.hours * 60 * 60 * 1000) + (duration.minutes * 60 * 1000) + (duration.seconds * 1000) + duration.milliseconds;
 // }
 
-function Middle({ params, styling, upcomingitems }) {
-  const previewMinutes = params.next ? parseInt(params.next) : 2;
+function Middle({ params, upcomingitems }) {
   const containerRef = React.useRef(null);
 
   return (
     <Box sx={{ overflow: 'hidden' }} ref={containerRef}>
       <Box display='flex' alignItems='center'>
-        <UpComing upcomingitems={upcomingitems} previewMinutes={previewMinutes} styling={styling} />
+        <UpComing upcomingitems={upcomingitems} />
       </Box>
     </Box>
   );
@@ -220,25 +219,23 @@ export default function App(params) {
   const minDuration = Temporal.Duration.from(params.minDuration || 'PT2M');
 
   const demo = false;
-  console.log(`params.styling ${params.styling} styling ${styling}`)
 
   useEffect(() => {
     if (upcomingitems.length > 0) {
+      console.log('First show setOn(true)')
       setOn(true);
     }
   }, [upcomingitems])
 
   useEffect(() => {
     if ((next) && (next.length > 0)) {
-      const nexts = JSON.stringify(next, 2000, null);
-      console.log(`We have some nexts ${nexts}`);
       const items = [];
       if (next.length > 0) {
         let itemsToAdd = 3;
         let addedCount = 0;
         let canAdd = true;
         while (canAdd) {
-          console.log('next[addedCount]', next[addedCount])
+          // console.log('next[addedCount]', next[addedCount])
           let item = gettitles(next[addedCount]);
           if (nowThenLater[0]) {
             item.starting = nowThenLater[0];
@@ -266,6 +263,7 @@ export default function App(params) {
 
         }
       }
+      console.log('setting upcoming items');
       setUpcomingItems(items);
 
     }
@@ -277,14 +275,15 @@ export default function App(params) {
     if (next.length === 0) {
       const tm = setTimeout(() => {
         (async () => {
+          console.log('about to fetch');
           const r = await fetch(`${urls[env]}/${sid}/${region}`);
           if (r.ok) {
             const data = await r.json()
-            console.log(`data ${data}`);
+            console.log(`got some data ${data}`);
             setNext(chooseNexts(data.next, minDuration));
           }
         })();
-      }, 1);
+      }, 0);
       return () => clearTimeout(tm);
     }
   });
